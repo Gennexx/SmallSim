@@ -1,0 +1,235 @@
+local DS = game:GetService("DataStoreService") --Calls the datastore
+local DS1 = DS:GetDataStore("Coins") --Calls the Specific Datastores for each Value
+local DS2 = DS:GetDataStore("Gems")
+local DS3 = DS:GetDataStore("Multiplier")
+local DS4 = DS:GetDataStore("Rebirths")
+local CheckZero = 1
+
+local Banlist = { --Strings define those who get banned
+	"Cheater",
+	"Exploiter",
+	"Me"
+}
+
+game.Players.PlayerAdded:Connect(function (plr) --Players.PlayerAdded Checks if a player joined the game
+	for i,v in pairs(Banlist) do --for loops throught every string to find a string that is equal to players name. If cant find itll continue
+		if plr.Name == v then
+			plr:Kick("You are banned")
+		end
+		
+	end
+	
+	local Stats = Instance.new("Folder",plr) --creating new folder with Instance.new
+	Stats.Name = "Stats"
+	
+	local CoinsVal = Instance.new("NumberValue",Stats) --creating 4 values and define the Name and Value. DS[Num]:GetAsync(plr.UserId) checks if theres already a saved number from the player saved under his userid
+	CoinsVal.Value = DS1:GetAsync(plr.UserId) or 0
+	CoinsVal.Name = "Coins"
+	
+	local GemsVal = Instance.new("NumberValue",Stats)
+	GemsVal.Value = DS2:GetAsync(plr.UserId) or 0
+	GemsVal.Name = "Gems"
+	
+	local Multiplier = Instance.new("NumberValue",Stats)
+	Multiplier.Value = DS3:GetAsync(plr.UserId) or 1
+	Multiplier.Name = "Multiplier"
+	
+	local Rebirths = Instance.new("NumberValue",Stats)
+	Rebirths.Value = DS4:GetAsync(plr.UserId) or 1
+	Rebirths.Name = "Rebirths"
+	
+	local MainGui = Instance.new("ScreenGui",plr.PlayerGui) --creating new ScreenGui
+	MainGui.IgnoreGuiInset = true
+	MainGui.Name = "MainGui"
+	
+	local Button = Instance.new("TextButton",plr.PlayerGui.MainGui) --Creating now different Textbuttons for Click, Upgrade and rebirth
+	Button.Name = "Clickbutton"
+	Button.Text = "Click"
+	Button.TextScaled = true
+	Button.Size = UDim2.new(0.2,0,.2,0)
+	
+	local UpgradeButton = Instance.new("TextButton",plr.PlayerGui.MainGui)
+	UpgradeButton.Name = "Upgradebutton"
+	UpgradeButton.Text = "Upgrade"
+	UpgradeButton.TextScaled = true
+	UpgradeButton.Size = UDim2.new(.15,0,.2,0)
+	UpgradeButton.Position = UDim2.new(0,0,.5,0)
+	
+	local RebirthButton = Instance.new("TextButton",plr.PlayerGui.MainGui)
+	RebirthButton.Name = "Rebirthbutton"
+	RebirthButton.Text = "Rebirth"
+	RebirthButton.TextScaled = true
+	RebirthButton.Size = UDim2.new(.15,0,.2,0)
+	RebirthButton.Position = UDim2.new(1,0,0,0)
+	RebirthButton.AnchorPoint = Vector2.new(1,0)
+	
+	local ShowCoins = Instance.new("TextLabel",plr.PlayerGui.MainGui) --Creating TextLabel to show the Values of the Player
+	ShowCoins.Name = "ShowCoins"
+	ShowCoins.Text = "Loading"
+	ShowCoins.TextScaled = true
+	ShowCoins.Size = UDim2.new(.15,0,.1,0)
+	ShowCoins.Position = UDim2.new(1,0,.5,0)
+	ShowCoins.AnchorPoint = Vector2.new(1,0)
+	ShowCoins.TextColor3 = Color3.new(1, 0.917647, 0)
+	
+	local ShowGems = Instance.new("TextLabel",plr.PlayerGui.MainGui)
+	ShowGems.Name = "ShowGems"
+	ShowGems.Text = "Loading"
+	ShowGems.TextScaled = true
+	ShowGems.Size = UDim2.new(.15,0,.1,0)
+	ShowGems.Position = UDim2.new(1,0,.6,0)
+	ShowGems.AnchorPoint = Vector2.new(1,0)
+	ShowGems.TextColor3 = Color3.new(0.85098, 0, 1)
+	
+	local ShowMultiplier = Instance.new("TextLabel",plr.PlayerGui.MainGui)
+	ShowMultiplier.Name = "ShowMultiplier"
+	ShowMultiplier.Text = "Loading"
+	ShowMultiplier.TextScaled = true
+	ShowMultiplier.Size = UDim2.new(.15,0,.1,0)
+	ShowMultiplier.Position = UDim2.new(1,0,.7,0)
+	ShowMultiplier.AnchorPoint = Vector2.new(1,0)
+	ShowMultiplier.TextColor3 = Color3.new(0.14902, 0, 1)
+	
+	local ShowRebirths = Instance.new("TextLabel",plr.PlayerGui.MainGui)
+	ShowMultiplier.Name = "ShowRebirths"
+	ShowRebirths.Text = "Loading"
+	ShowRebirths.TextScaled = true
+	ShowRebirths.Size = UDim2.new(.15,0,.1,0)
+	ShowRebirths.Position = UDim2.new(1,0,.8,0)
+	ShowRebirths.AnchorPoint = Vector2.new(1,0)
+	ShowRebirths.TextColor3 = Color3.new(1, 0, 0.0156863)
+	
+	spawn(function () --Spawn does, that everything inside wont stop the script. it just goes down so that the loop wont block everything
+		while true do --This loops now infinity to refresh the ShowCoins Label. It also converts the number to K, Million, Billion by the Variable CheckZero
+			task.wait(.2)
+			if CheckZero == 1000 then
+				local UpNum = CoinsVal.Value*100
+				local RoundedUpNum = math.round(UpNum)
+				local FinalNum = RoundedUpNum/100
+				ShowCoins.Text = "Coins: "..FinalNum/CheckZero.."K"
+			elseif CheckZero == 1000000 then
+				local UpNum = CoinsVal.Value*100
+				local RoundedUpNum = math.round(UpNum)
+				local FinalNum = RoundedUpNum/100
+				ShowCoins.Text = "Coins: "..FinalNum/CheckZero.."M"
+				
+			elseif CheckZero == 1000000000 then
+				local UpNum = CoinsVal.Value*100
+				local RoundedUpNum = math.round(UpNum)
+				local FinalNum = RoundedUpNum/100
+				ShowCoins.Text = "Coins: "..FinalNum/CheckZero.."B"
+			elseif CheckZero == 1000000000000 then
+				local UpNum = CoinsVal.Value*100
+				local RoundedUpNum = math.round(UpNum)
+				local FinalNum = RoundedUpNum/100
+				ShowCoins.Text = "Coins: "..FinalNum/CheckZero.."T"
+			elseif CheckZero == 1000000000000000 then
+				local UpNum = CoinsVal.Value*100
+				local RoundedUpNum = math.round(UpNum)
+				local FinalNum = RoundedUpNum/100
+				ShowCoins.Text = "Coins: "..FinalNum/CheckZero.."qd"
+				
+			elseif CheckZero == 1000000000000000000 then
+				local UpNum = CoinsVal.Value*100
+				local RoundedUpNum = math.round(UpNum)
+				local FinalNum = RoundedUpNum/100
+				ShowCoins.Text = "Coins: "..FinalNum/CheckZero.."qn"
+				
+			elseif CheckZero == 1000000000000000000000 then
+				local UpNum = CoinsVal.Value*100
+				local RoundedUpNum = math.round(UpNum)
+				local FinalNum = RoundedUpNum/100
+				ShowCoins.Text = "Coins: "..FinalNum/CheckZero.."sx"
+				
+			elseif CheckZero == 1000000000000000000000*1000 then
+				local UpNum = CoinsVal.Value*100
+				local RoundedUpNum = math.round(UpNum)
+				local FinalNum = RoundedUpNum/100
+				ShowCoins.Text = "Coins: "..FinalNum/CheckZero.."sp"
+				
+			elseif CheckZero == 1000000000000000000000*1000000 then
+				local UpNum = CoinsVal.Value*100
+				local RoundedUpNum = math.round(UpNum)
+				local FinalNum = RoundedUpNum/100
+				ShowCoins.Text = "Coins: "..FinalNum/CheckZero.."N"
+				
+			elseif CheckZero == 1000000000000000000000*1000000000 then
+				local UpNum = CoinsVal.Value*100
+				local RoundedUpNum = math.round(UpNum)
+				local FinalNum = RoundedUpNum/100
+				ShowCoins.Text = "Coins: "..FinalNum/CheckZero.."Oc"
+				
+			elseif CheckZero == 1000000000000000000000*1000000000000 then
+				local UpNum = CoinsVal.Value*100
+				local RoundedUpNum = math.round(UpNum)
+				local FinalNum = RoundedUpNum/100
+				ShowCoins.Text = "Coins: "..FinalNum/CheckZero.."Dc"
+			
+			else
+				ShowCoins.Text = "Coins: "..CoinsVal.Value
+			
+			
+			end
+		end
+	end)
+	
+	spawn(function () --Same as ShowCoins but without the converter and it refreshes the Gems
+		while true do
+			task.wait(.2)
+			ShowGems.Text = "Gems: "..GemsVal.Value
+		end
+	end)
+	
+	spawn(function () --Same as ShowGems but its for refreshing ShowMultiplier
+		while true do
+			task.wait(.2)
+			ShowMultiplier.Text = "Multiplier: "..Multiplier.Value
+		end
+	end)
+	
+	spawn(function () --Same as ShowMultiplier but its for refreshing ShowRebirths
+		while true do
+			task.wait(.2)
+			ShowRebirths.Text = "Rebirths: "..Rebirths.Value
+		end
+	end)
+	
+	
+	Button.MouseButton1Click:Connect(function () --Checks if the Click button got clicked and adds 1* The players Multiplier Value * the players Rebirths/10. It also checks how many zeros the number has and will change the Variable CheckZero
+		plr.Stats.Coins.Value +=1 * plr.Stats.Multiplier.Value *(Rebirths.Value/2)
+		if plr.Stats.Coins.Value > 999 then
+			CheckZero = 1000
+			
+			if plr.Stats.Coins.Value > 999999 then
+				CheckZero = 1000000
+			end
+		end
+		local GemDrop = math.random(1,10)
+		if GemDrop == 10 then --math.random(1,10) will pick a random number from 1-10. if 10 gets picked youll receive 1 gem+your Rebirths.
+			plr.Stats.Gems.Value += 1 +Rebirths.Value
+		end
+	end)
+	
+	UpgradeButton.MouseButton1Click:Connect(function () --If you got more than 999 Coins youll lose 1000 and get +1 upgrade
+		if plr.Stats.Coins.Value > 999 then
+			plr.Stats.Coins.Value -= 1000
+			plr.Stats.Multiplier.Value +=1
+		end
+	end)
+	
+	RebirthButton.MouseButton1Click:Connect(function () -- if you got more than 99 gems youll lose everything but get +1 rebirth
+		if plr.Stats.Gems.Value >99 then
+			plr.Stats.Rebirths.Value += math.round(GemsVal.Value/100)
+			plr.Stats.Gems.Value = 0
+			plr.Stats.Coins.Value = 0
+			plr.Stats.Multiplier.Value = 1
+		end
+	end)
+end)
+
+game.Players.PlayerRemoving:Connect(function (plr) --if player disconnects all Values gets stored in the Datastore under the Key of the Players UserId
+	DS1:SetAsync(plr.UserId,plr.Stats.Coins.Value)
+	DS2:SetAsync(plr.UserId,plr.Stats.Gems.Value)
+	DS3:SetAsync(plr.UserId,plr.Stats.Multiplier.Value)
+	DS4:SetAsync(plr.UserId,plr.Stats.Rebirths.Value)
+end)
